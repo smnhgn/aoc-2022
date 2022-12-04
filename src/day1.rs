@@ -1,7 +1,7 @@
 use std::fs::read_to_string;
 
 pub fn solve() -> i32 {
-    let input = read_to_string("day_one/input.txt").expect("should read input");
+    let input = read_to_string("day1/input.txt").expect("should read input");
     let mut calories_sum_max = 0;
 
     for calories_by_elf in input.split("\n\n") {

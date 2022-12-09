@@ -2,7 +2,7 @@ use std::collections::BTreeMap;
 use std::fs::read_to_string;
 
 pub fn solve() -> i32 {
-    let input = read_to_string("day3/input.txt").expect("should read input");
+    let input = read_to_string("./src/day3/_input.txt").expect("should read input");
 
     let priorities_map: BTreeMap<char, i32> = ('a'..='z')
         .chain('A'..='Z')

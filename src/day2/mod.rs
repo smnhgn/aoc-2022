@@ -35,7 +35,7 @@ fn get_score(player_option: Option, opponent_option: Option) -> i32 {
 }
 
 pub fn solve() -> i32 {
-    let input = read_to_string("day2/input.txt").expect("should read input");
+    let input = read_to_string("./src/day2/_input.txt").expect("should read input");
     let mut score_total = 0;
 
     for line in input.split("\n") {

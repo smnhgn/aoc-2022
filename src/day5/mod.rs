@@ -1,7 +1,7 @@
 use std::fs::read_to_string;
 
 pub fn solve() -> String {
-    let input = read_to_string("day5/input.txt").expect("should read input");
+    let input = read_to_string("./src/day5/_input.txt").expect("should read input");
 
     let separator_pos = input.lines().position(|line| line.is_empty()).unwrap();
 

@@ -6,7 +6,7 @@ fn is_contained(sect: RangeInclusive<i32>, start: i32, end: i32) -> bool {
 }
 
 pub fn solve() -> i32 {
-    let input = read_to_string("day4/input.txt").expect("should read input");
+    let input = read_to_string("./src/day4/_input.txt").expect("should read input");
 
     let sum = input
         .lines()

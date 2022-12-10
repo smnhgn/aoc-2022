@@ -13,5 +13,5 @@ fn main() {
     println!("day4: {}", day4::solve());
     println!("day5: {}", day5::solve());
     println!("day6: {}", day6::solve());
-    println!("day7: {}", day7::solve());
+    println!("day7: {:?}", day7::solve());
 }

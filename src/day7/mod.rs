@@ -1,34 +1,54 @@
-use std::fs::read_to_string;
+use std::{collections::BTreeMap, fs::read_to_string, path::PathBuf};
 
-#[cfg(test)]
-mod tests;
+pub fn solve() -> u32 {
+    let input = read_to_string("./src/day7/_input.txt").expect("should read input");
 
-struct File {
-    name: String,
-    size: u32,
-}
+    let dir_max_size: u32 = 100_000;
+    let mut file_map: BTreeMap<PathBuf, u32> = BTreeMap::new();
+    let mut dir_map: BTreeMap<PathBuf, u32> = BTreeMap::new();
+    let mut current_path = PathBuf::new();
 
-struct Directory {
-    files: Vec<File>,
-    directories: Vec<Directory>,
-}
+    for line in input.lines() {
+        let line_parts = line.split_whitespace().collect::<Vec<_>>();
 
-impl Directory {
-    fn size(self) -> u32 {
-        let sum_files: u32 = self.files.into_iter().map(|file| file.size).sum();
-        let sum_directories: u32 = self.directories.into_iter().map(|dir| dir.size()).sum();
+        match (
+            line_parts.get(0).copied(),
+            line_parts.get(1).copied(),
+            line_parts.get(2).copied(),
+        ) {
+            (Some("$"), Some("cd"), Some(argument)) => {
+                match argument {
+                    ".." => {
+                        current_path.pop();
+                    }
+                    path => {
+                        current_path.push(path);
+                    }
+                };
+            }
+            (Some("$"), _, _) => (),
+            (Some("dir"), _, _) => (),
+            (Some(size_str), Some(file_name), _) => {
+                let size = size_str.parse::<u32>().unwrap();
+                let file_path = current_path.join(file_name);
 
-        sum_files + sum_directories
+                file_map.insert(file_path, size);
+            }
+            _ => (),
+        }
     }
-}
 
-struct Line {
-    files: Vec<File>,
-    directories: Vec<Directory>,
-}
+    for (file_path, file_size) in file_map.iter() {
+        for dir in file_path.parent().unwrap().ancestors() {
+            dir_map
+                .entry(dir.to_path_buf())
+                .and_modify(|dir_size| *dir_size += file_size)
+                .or_insert(*file_size);
+        }
+    }
 
-pub fn solve() -> usize {
-    let input = read_to_string("./src/day6/_input.txt").expect("should read input");
-
-    1
+    dir_map
+        .iter()
+        .filter_map(|(_, dir_size)| (*dir_size < dir_max_size).then_some(dir_size))
+        .sum::<u32>()
 }

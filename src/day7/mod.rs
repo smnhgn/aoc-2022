@@ -10,29 +10,21 @@ pub fn solve() -> u32 {
     for line in input.lines() {
         let line_parts = line.split_whitespace().collect::<Vec<_>>();
 
-        match (
-            line_parts.get(0).copied(),
-            line_parts.get(1).copied(),
-            line_parts.get(2).copied(),
-        ) {
-            (Some("$"), Some("cd"), Some("..")) => drop(current_path.pop()),
-            (Some("$"), Some("cd"), Some(path)) => current_path.push(path),
-            (Some("$"), _, _) => (),
-            (Some("dir"), _, _) => (),
-            (Some(file_size_str), Some(file_name), _) => {
-                let file_size = file_size_str.parse::<u32>().unwrap();
-                let file_path = current_path.join(file_name);
+        match line_parts.as_slice() {
+            ["$", "cd", ".."] => drop(current_path.pop()),
+            ["$", "cd", path] => current_path.push(path),
+            ["$" | "dir", ..] => (), // ignore
+            [file_size, ..] => {
+                let file_size = file_size.parse::<u32>().unwrap();
 
-                for dir in file_path.parent().unwrap().ancestors() {
-                    let dir_path = dir.to_path_buf();
-
+                for dir in current_path.ancestors() {
                     dir_map
-                        .entry(dir_path)
+                        .entry(dir.to_path_buf())
                         .and_modify(|dir_size| *dir_size += file_size)
                         .or_insert(file_size);
                 }
             }
-            _ => (),
+            _ => (), // ignore
         }
     }
 

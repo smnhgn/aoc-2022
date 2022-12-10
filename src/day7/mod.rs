@@ -4,7 +4,6 @@ pub fn solve() -> u32 {
     let input = read_to_string("./src/day7/_input.txt").expect("should read input");
 
     let dir_max_size: u32 = 100_000;
-    let mut file_map: BTreeMap<PathBuf, u32> = BTreeMap::new();
     let mut dir_map: BTreeMap<PathBuf, u32> = BTreeMap::new();
     let mut current_path = PathBuf::new();
 
@@ -16,34 +15,24 @@ pub fn solve() -> u32 {
             line_parts.get(1).copied(),
             line_parts.get(2).copied(),
         ) {
-            (Some("$"), Some("cd"), Some(argument)) => {
-                match argument {
-                    ".." => {
-                        current_path.pop();
-                    }
-                    path => {
-                        current_path.push(path);
-                    }
-                };
-            }
+            (Some("$"), Some("cd"), Some("..")) => drop(current_path.pop()),
+            (Some("$"), Some("cd"), Some(path)) => current_path.push(path),
             (Some("$"), _, _) => (),
             (Some("dir"), _, _) => (),
-            (Some(size_str), Some(file_name), _) => {
-                let size = size_str.parse::<u32>().unwrap();
+            (Some(file_size_str), Some(file_name), _) => {
+                let file_size = file_size_str.parse::<u32>().unwrap();
                 let file_path = current_path.join(file_name);
 
-                file_map.insert(file_path, size);
+                for dir in file_path.parent().unwrap().ancestors() {
+                    let dir_path = dir.to_path_buf();
+
+                    dir_map
+                        .entry(dir_path)
+                        .and_modify(|dir_size| *dir_size += file_size)
+                        .or_insert(file_size);
+                }
             }
             _ => (),
-        }
-    }
-
-    for (file_path, file_size) in file_map.iter() {
-        for dir in file_path.parent().unwrap().ancestors() {
-            dir_map
-                .entry(dir.to_path_buf())
-                .and_modify(|dir_size| *dir_size += file_size)
-                .or_insert(*file_size);
         }
     }
 

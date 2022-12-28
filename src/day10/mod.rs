@@ -32,7 +32,7 @@ impl CPU {
     }
 }
 
-pub fn solve() -> i32 {
+pub fn solve() -> (i32, String) {
     let input = read_to_string("./src/day10/_input.txt").expect("should read input");
 
     let mut cpu = CPU {
@@ -42,6 +42,7 @@ pub fn solve() -> i32 {
     };
 
     let mut signal_strengths: Vec<i32> = vec![];
+    let mut canvas: String = String::from("");
 
     for line in input.lines() {
         let mut line_parts = line.split_whitespace();
@@ -62,6 +63,25 @@ pub fn solve() -> i32 {
     }
 
     while cpu.instructions.len() > 0 {
+        let row = (cpu.cycle - 1) / 40;
+        let column = (cpu.cycle - 1) % 40;
+
+        let sprite_start = column - 1;
+        let sprite_end = column + 1;
+        let sprite = sprite_start..=sprite_end;
+
+        let pixel = if sprite.contains(&cpu.register) {
+            '#'
+        } else {
+            '.'
+        };
+
+        if row != 0 && column == 0 {
+            canvas.push('\n');
+        };
+
+        canvas.push(pixel);
+
         cpu.tick();
 
         match cpu.cycle {
@@ -70,5 +90,5 @@ pub fn solve() -> i32 {
         }
     }
 
-    signal_strengths.iter().sum()
+    (signal_strengths.iter().sum(), canvas)
 }

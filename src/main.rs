@@ -19,5 +19,9 @@ fn main() {
     println!("day7: {:?}", day7::solve());
     println!("day8: {:?}", day8::solve());
     println!("day9: {:?}", day9::solve());
-    println!("day10: {:?}", day10::solve());
+
+    let day10_solution = day10::solve();
+
+    println!("day10: {}", day10_solution.0);
+    println!("{}", day10_solution.1);
 }
